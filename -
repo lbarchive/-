@@ -44,6 +44,7 @@ Options:
   -u  change separator character to '─'
   -f  change foreground color
   -b  change background color
+  -M  do not move cursor up
 
 Colors: ${!CTBL[@]}, or something like '1;33m'
 " | fold
@@ -53,7 +54,7 @@ W=$(tput cols)
 printf -v SEP '%*s' $W
 C='-'
 
-while getopts :c:uf:b: opt; do
+while getopts :c:uf:b:M opt; do
   case $opt in
     c)
       C=$OPTARG
@@ -69,6 +70,9 @@ while getopts :c:uf:b: opt; do
       B=4${CTBL[$OPTARG]}
       [[ $B = 4 ]] && B=$OPTARG
       ;;
+    M)
+      M=1
+      ;;
     *)
       help
       exit 1
@@ -76,6 +80,7 @@ while getopts :c:uf:b: opt; do
   esac
 done
 
+[[ $M ]] || echo -ne "\e[1F"
 [[ $F ]] && echo -ne "\e[$F"
 [[ $B ]] && echo -ne "\e[$B"
 SEP="${SEP// /$C}"
